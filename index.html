@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stripe Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <form id="payment-form">
+      <div id="card-element"></div>
+      <button type="submit">Submit Payment</button>
+    </form>
+
+    <script>
+      // Initialize Stripe
+      const stripe = Stripe(
+        "pk_test_51QCahrGBTeINIOY6Lksh7br09Get1rCx4ZIKxUXNHJVpUylKb3qY5Nc0vlVVLTukreYk5Jxdzx0WdWGDw7ATk50e00ssKOAnz0"
+      );
+
+      // Create an instance of Elements
+      const elements = stripe.elements();
+
+      // Create a card element
+      const card = elements.create("card");
+      card.mount("#card-element");
+
+      // Handle form submission
+      const form = document.getElementById("payment-form");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+          type: "card",
+          card: card,
+        });
+
+        if (error) {
+          console.error(error);
+          // Display error to the user
+        } else {
+          console.log("PaymentMethod ID:", paymentMethod);
+          // Send paymentMethod.id to your server
+          // Example: sendPaymentMethodToServer(paymentMethod.id);
+        }
+      });
+    </script>
+  </body>
+</html>
